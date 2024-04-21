@@ -14,7 +14,7 @@ class UnalignedDataset(BaseDataset):
     and from domain B '/path/to/data/trainB' respectively.
     You can train the model with the dataset flag '--dataroot /path/to/data'.
     Similarly, you need to prepare two directories:
-    '/path/to/data/testA' and '/path/to/data/testB' during test time.
+    '/path/to/data/content' and '/path/to/data/styles' during test time.
     """
 
     def __init__(self, opt):
@@ -24,8 +24,12 @@ class UnalignedDataset(BaseDataset):
             opt (Option class) -- stores all the experiment flags; needs to be a subclass of BaseOptions
         """
         BaseDataset.__init__(self, opt)
-        self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')  # create a path '/path/to/data/trainA'
-        self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')  # create a path '/path/to/data/trainB'
+        if opt.phase == "test":
+            self.dir_A = os.path.join(opt.dataroot, "content")
+            self.dir_B = os.path.join(opt.dataroot, "styles")
+        else:
+            self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')  # create a path '/path/to/data/trainA'
+            self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')  # create a path '/path/to/data/trainB'
         if opt.phase == "test" and not os.path.exists(self.dir_A) \
            and os.path.exists(os.path.join(opt.dataroot, "valA")):
             self.dir_A = os.path.join(opt.dataroot, "valA")
